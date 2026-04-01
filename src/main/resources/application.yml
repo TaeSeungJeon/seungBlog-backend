@@ -1,0 +1,23 @@
+  server:
+    port: 8080
+
+  github:
+    token: ${GITHUB_TOKEN}
+    userName: ${GITHUB_USERNAME}
+    content-repo: seung-content
+
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration: 86400000
+
+  spring:
+    security:
+      oauth2:
+        client:
+          registration:
+            github:
+              client-id: ${GITHUB_CLIENT_ID}
+              client-secret: ${GITHUB_CLIENT_SECRET}
+              scope:
+                - read:user
+                - user:email
