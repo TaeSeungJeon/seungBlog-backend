@@ -45,9 +45,11 @@ public class PostService {
                             .title(frontmatter.getOrDefault("title", filename))
                             .date(frontmatter.getOrDefault("date", ""))
                             .description(frontmatter.getOrDefault("description", ""))
+                            .category(frontmatter.getOrDefault("category", "기타"))  // 카테고리 추가
                             .filename(filename)
                             .build();
                 })
+                .sorted((a, b) -> b.getDate().compareTo(a.getDate()))
                 .collect(Collectors.toList());
     }
 

@@ -30,6 +30,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/posts/**").permitAll()
+                        .requestMatchers("/api/health").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/guestbook").permitAll()
                         .anyRequest().authenticated()
                 )
