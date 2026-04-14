@@ -25,4 +25,12 @@ public class PostController {
     public ResponseEntity<PostDetailDto> getPost(@PathVariable String filename) {
         return ResponseEntity.ok(postService.getPost(filename));
     }
+
+    // 캐시 수동 초기화 엔드포인트
+    // 새 글 올린 후 https://seungblog.duckdns.org/api/posts/cache/clear 호출하면 즉시 반영
+    @DeleteMapping("/cache/clear")
+    public ResponseEntity<Void> clearCache() {
+        postService.clearCache();
+        return ResponseEntity.noContent().build();
+    }
 }

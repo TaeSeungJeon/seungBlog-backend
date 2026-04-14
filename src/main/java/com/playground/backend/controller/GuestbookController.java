@@ -25,17 +25,17 @@ public class GuestbookController {
     @PostMapping
     public ResponseEntity<GuestbookResponseDto> createGuestbook(
             @RequestBody GuestbookRequestDto req,
-            //프론트에서 JSON으로 보낸 데이터를 DTO로 자동 변환
             @AuthenticationPrincipal String username
-            //JwtAuthFilter가 SecurityContext에 저장한 username을 자동으로 파라미터로 받아오는 방법
-    ){
+    ) {
         return ResponseEntity.ok(guestbookService.createGuestbook(req, username));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteGuestbook(@PathVariable Long id) {
-        guestbookService.deleteGuestbook(id);
+    public ResponseEntity<Void> deleteGuestbook(
+            @PathVariable Long id,
+            @AuthenticationPrincipal String username
+    ) {
+        guestbookService.deleteGuestbook(id, username);
         return ResponseEntity.noContent().build();
     }
-
 }

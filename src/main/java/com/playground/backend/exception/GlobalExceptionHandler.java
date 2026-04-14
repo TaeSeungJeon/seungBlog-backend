@@ -1,5 +1,7 @@
 package com.playground.backend.exception;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -7,6 +9,9 @@ import org.springframework.web.client.HttpClientErrorException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
 
     // 우리가 직접 던지는 예외 처리
     @ExceptionHandler(CustomException.class)
@@ -35,6 +40,7 @@ public class GlobalExceptionHandler {
     // 예상치 못한 에러 처리
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception e) {
+        log.error("예상치 못한 에러 발생: {}", e.getMessage(), e); // 이 줄 추가
         return ResponseEntity
                 .internalServerError()
                 .body(ErrorResponse.builder()
