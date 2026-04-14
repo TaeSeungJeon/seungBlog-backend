@@ -19,7 +19,9 @@ jobs:
           distribution: 'temurin'
 
       - name: JAR 빌드
-        run: ./mvnw clean package -DskipTests
+        run: |
+          chmod +x ./mvnw
+          ./mvnw clean package -DskipTests
 
       - name: JAR 파일 전송
         uses: appleboy/scp-action@v0.1.7
