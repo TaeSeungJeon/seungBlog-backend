@@ -8,7 +8,7 @@ github:
 
 jwt:
   secret: ${JWT_SECRET}
-  expiration: 86400000
+  expiration: 1800000
 
 spring:
   security:
