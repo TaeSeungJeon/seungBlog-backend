@@ -1,6 +1,5 @@
 package com.playground.backend.service;
 
-import com.playground.backend.service.GitHubApiClient;
 import com.playground.backend.dto.PostDetailDto;
 import com.playground.backend.dto.PostSummaryDto;
 import lombok.RequiredArgsConstructor;

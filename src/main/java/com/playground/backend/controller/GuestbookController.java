@@ -49,4 +49,13 @@ public class GuestbookController {
         guestbookService.deleteGuestbookReply(id, username);
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteGuestbook(
+            @PathVariable Long id,
+            @AuthenticationPrincipal String username
+    ) {
+        guestbookService.deleteGuestbook(id, username);
+        return ResponseEntity.noContent().build();
+    }
 }
