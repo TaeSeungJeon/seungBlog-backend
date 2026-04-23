@@ -66,4 +66,16 @@ public class GitHubApiClient {
                 new ParameterizedTypeReference<Map<String, Object>>() {}
         );
     }
+
+    public void patch(String url, Object body) {
+        HttpHeaders headers = createHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        restTemplate.exchange(
+                url,
+                HttpMethod.PATCH,
+                new HttpEntity<>(body, headers),
+                new ParameterizedTypeReference<Map<String, Object>>() {}
+        );
+    }
+
 }
