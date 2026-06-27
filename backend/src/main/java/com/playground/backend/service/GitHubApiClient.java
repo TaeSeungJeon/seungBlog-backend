@@ -21,6 +21,13 @@ public class GitHubApiClient {
     public void delete(String url) {
         restTemplate.exchange(url, HttpMethod.DELETE, new HttpEntity<>(createHeaders()), Void.class);
     }
+
+    // DELETE 요청 (body 포함) — GitHub Contents API 파일 삭제는 sha 를 body 로 요구함
+    public void delete(String url, Object body) {
+        HttpHeaders headers = createHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        restTemplate.exchange(url, HttpMethod.DELETE, new HttpEntity<>(body, headers), Void.class);
+    }
     // 공통 헤더 생성
     private HttpHeaders createHeaders() {
         HttpHeaders headers = new HttpHeaders();
@@ -48,6 +55,20 @@ public class GitHubApiClient {
         ResponseEntity<T> response = restTemplate.exchange(
                 url,
                 HttpMethod.POST,
+                new HttpEntity<>(body, headers),
+                responseType
+        );
+        return response.getBody();
+    }
+
+    // PUT 요청 — GitHub Contents API 파일 생성/수정
+    public <T> T put(String url, Object body, ParameterizedTypeReference<T> responseType) {
+        HttpHeaders headers = createHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        ResponseEntity<T> response = restTemplate.exchange(
+                url,
+                HttpMethod.PUT,
                 new HttpEntity<>(body, headers),
                 responseType
         );

@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
 import PostsPage from './pages/PostsPage';
 import PostDetailPage from './pages/PostDetailPage';
+import PostEditorPage from './pages/PostEditorPage';
 import AboutPage from './pages/AboutPage';
 import GuestbookPage from './pages/GuestbookPage';
 import PlaygroundPage from './pages/PlaygroundPage';
@@ -94,8 +95,10 @@ function App() {
                 <main className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
                     <Routes>
                         <Route path="/" element={<HomePage />} />
-                        <Route path="/posts" element={<PostsPage />} />
+                        <Route path="/posts" element={<PostsPage auth={auth} />} />
+                        <Route path="/posts/new" element={<PostEditorPage auth={auth} />} />
                         <Route path="/posts/:filename" element={<PostDetailPage auth={auth} />} />
+                        <Route path="/posts/:filename/edit" element={<PostEditorPage auth={auth} />} />
                         <Route path="/about" element={<AboutPage />} />
                         <Route path="/guestbook" element={<GuestbookPage auth={auth} />} />
                         <Route path="/playground" element={<PlaygroundPage />} />

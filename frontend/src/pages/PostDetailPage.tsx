@@ -1,9 +1,9 @@
 import { useEffect, useState, useMemo } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { getPost } from '../api/postApi';
+import { getPost, deletePost } from '../api/postApi';
 import { getComments, createComment, createReply, deleteComment, deleteReply } from '../api/commentApi';
 import type { PostDetail, Comment, AuthState } from '../types';
 
@@ -21,7 +21,9 @@ const OWNER = 'TaeSeungJeon';
 
 function PostDetailPage({ auth }: PostDetailPageProps) {
     const { filename } = useParams<{ filename: string }>();
+    const navigate = useNavigate();
     const [post, setPost] = useState<PostDetail | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [comments, setComments] = useState<Comment[]>([]);
     const [commentContent, setCommentContent] = useState('');
@@ -72,6 +74,19 @@ function PostDetailPage({ auth }: PostDetailPageProps) {
         if (!filename) return;
         await deleteReply(filename, commentId);
         setComments(prev => prev.map(c => c.id === commentId ? { ...c, reply: null } : c));
+    };
+
+    const handleDeletePost = async () => {
+        if (!filename) return;
+        if (!window.confirm('이 글을 삭제하시겠습니까? 되돌릴 수 없습니다.')) return;
+        setIsDeleting(true);
+        try {
+            await deletePost(filename);
+            navigate('/posts');
+        } catch {
+            setIsDeleting(false);
+            window.alert('삭제에 실패했습니다.');
+        }
     };
 
     const renderedContent = useMemo(() => (
@@ -133,9 +148,29 @@ function PostDetailPage({ auth }: PostDetailPageProps) {
 
     return (
         <div className="space-y-10 pt-10">
-            <Link to="/posts" className="inline-flex items-center gap-1 text-sm text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors">
-                ← posts
-            </Link>
+            <div className="flex items-center justify-between">
+                <Link to="/posts" className="inline-flex items-center gap-1 text-sm text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors">
+                    ← posts
+                </Link>
+
+                {auth.username === OWNER && (
+                    <div className="flex items-center gap-3">
+                        <Link
+                            to={`/posts/${filename}/edit`}
+                            className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
+                        >
+                            수정
+                        </Link>
+                        <button
+                            onClick={handleDeletePost}
+                            disabled={isDeleting}
+                            className="text-xs text-gray-400 hover:text-red-400 transition-colors disabled:opacity-40"
+                        >
+                            {isDeleting ? '삭제 중...' : '삭제'}
+                        </button>
+                    </div>
+                )}
+            </div>
 
             <div className="space-y-3 pb-8 border-b border-gray-100 dark:border-gray-800">
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white leading-tight">{post.title}</h1>

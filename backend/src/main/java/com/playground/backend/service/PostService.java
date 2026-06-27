@@ -1,15 +1,20 @@
 package com.playground.backend.service;
 
 import com.playground.backend.dto.PostDetailDto;
+import com.playground.backend.dto.PostRequestDto;
 import com.playground.backend.dto.PostSummaryDto;
+import com.playground.backend.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -87,6 +92,155 @@ public class PostService {
     // allEntries = true : 특정 key만 지우는 게 아니라 해당 캐시 전체를 비움
     @CacheEvict(value = {"posts", "postDetail"}, allEntries = true)
     public void clearCache() {}
+
+    // =========================  CRUD (관리자 전용)  =========================
+    // 모든 쓰기 작업은 content 레포(posts/*.md)에 직접 커밋되며, 완료 후 캐시를 초기화한다.
+
+    // [신규] 글 작성 — content 레포에 새 .md 파일 생성
+    @CacheEvict(value = {"posts", "postDetail"}, allEntries = true)
+    public PostDetailDto createPost(PostRequestDto req, String requestingUser) {
+        verifyOwner(requestingUser);
+        if (req.getContent() == null || req.getContent().isBlank()) {
+            throw new CustomException(HttpStatus.BAD_REQUEST, "본문 내용이 필요합니다.");
+        }
+
+        String filename = resolveFilename(req);
+        if (fetchSha(filename) != null) {
+            throw new CustomException(HttpStatus.CONFLICT, "이미 존재하는 글입니다: " + filename);
+        }
+
+        Map<String, Object> body = Map.of(
+                "message", "post: create " + filename,
+                "content", encode(buildMarkdown(req))
+        );
+        gitHubApiClient.put(contentsUrl(filename), body, new ParameterizedTypeReference<Map<String, Object>>() {});
+        return toDetail(req, filename);
+    }
+
+    // [신규] 글 수정 — 기존 파일 sha 를 받아 덮어쓰기
+    @CacheEvict(value = {"posts", "postDetail"}, allEntries = true)
+    public PostDetailDto updatePost(String filename, PostRequestDto req, String requestingUser) {
+        verifyOwner(requestingUser);
+        if (req.getContent() == null || req.getContent().isBlank()) {
+            throw new CustomException(HttpStatus.BAD_REQUEST, "본문 내용이 필요합니다.");
+        }
+
+        String target = withMd(filename);
+        String sha = fetchSha(target);
+        if (sha == null) {
+            throw new CustomException(HttpStatus.NOT_FOUND, "글을 찾을 수 없습니다: " + target);
+        }
+
+        Map<String, Object> body = Map.of(
+                "message", "post: update " + target,
+                "content", encode(buildMarkdown(req)),
+                "sha", sha
+        );
+        gitHubApiClient.put(contentsUrl(target), body, new ParameterizedTypeReference<Map<String, Object>>() {});
+        return toDetail(req, target);
+    }
+
+    // [신규] 글 삭제 — sha 를 받아 파일 제거
+    @CacheEvict(value = {"posts", "postDetail"}, allEntries = true)
+    public void deletePost(String filename, String requestingUser) {
+        verifyOwner(requestingUser);
+
+        String target = withMd(filename);
+        String sha = fetchSha(target);
+        if (sha == null) {
+            throw new CustomException(HttpStatus.NOT_FOUND, "글을 찾을 수 없습니다: " + target);
+        }
+
+        Map<String, Object> body = Map.of(
+                "message", "post: delete " + target,
+                "sha", sha
+        );
+        gitHubApiClient.delete(contentsUrl(target), body);
+    }
+
+    // 관리자(github.username) 본인만 허용
+    private void verifyOwner(String requestingUser) {
+        if (requestingUser == null || !username.equalsIgnoreCase(requestingUser)) {
+            throw new CustomException(HttpStatus.FORBIDDEN, "게시글은 관리자만 작성·수정·삭제할 수 있습니다.");
+        }
+    }
+
+    private String contentsUrl(String filename) {
+        return String.format(
+                "https://api.github.com/repos/%s/%s/contents/posts/%s",
+                username, contentRepo, filename
+        );
+    }
+
+    // 파일이 존재하면 sha 반환, 없으면 null (GitHub 404 → 신규 파일)
+    private String fetchSha(String filename) {
+        try {
+            Map<String, Object> file = gitHubApiClient.get(
+                    contentsUrl(filename),
+                    new ParameterizedTypeReference<>() {}
+            );
+            return file == null ? null : (String) file.get("sha");
+        } catch (HttpClientErrorException.NotFound e) {
+            return null;
+        }
+    }
+
+    private String resolveFilename(PostRequestDto req) {
+        String fn = req.getFilename();
+        if (fn == null || fn.isBlank()) {
+            if (req.getTitle() == null || req.getTitle().isBlank()) {
+                throw new CustomException(HttpStatus.BAD_REQUEST, "제목 또는 파일명이 필요합니다.");
+            }
+            // 제목 → 파일명 (공백은 -, 그 외 특수문자 제거, 한글은 유지)
+            fn = req.getTitle().trim()
+                    .replaceAll("\\s+", "-")
+                    .replaceAll("[^0-9A-Za-z가-힣_-]", "");
+            if (fn.isBlank()) fn = "post";
+        }
+        return withMd(fn.trim());
+    }
+
+    private String withMd(String filename) {
+        return filename.endsWith(".md") ? filename : filename + ".md";
+    }
+
+    // frontmatter + 본문 형태의 마크다운 문자열 생성
+    private String buildMarkdown(PostRequestDto req) {
+        return "---\n"
+                + "title: \"" + escape(req.getTitle()) + "\"\n"
+                + "date: \"" + resolveDate(req.getDate()) + "\"\n"
+                + "description: \"" + escape(req.getDescription()) + "\"\n"
+                + "category: \"" + resolveCategory(req.getCategory()) + "\"\n"
+                + "---\n\n"
+                + (req.getContent() == null ? "" : req.getContent().strip()) + "\n";
+    }
+
+    private PostDetailDto toDetail(PostRequestDto req, String filename) {
+        return PostDetailDto.builder()
+                .title(req.getTitle())
+                .date(resolveDate(req.getDate()))
+                .description(req.getDescription() == null ? "" : req.getDescription())
+                .content(req.getContent() == null ? "" : req.getContent().strip())
+                .filename(filename)
+                .build();
+    }
+
+    private String resolveDate(String date) {
+        return (date == null || date.isBlank()) ? LocalDate.now().toString() : date.trim();
+    }
+
+    private String resolveCategory(String category) {
+        return (category == null || category.isBlank()) ? "기타" : category.trim();
+    }
+
+    // frontmatter 값(따옴표 1줄)이 깨지지 않도록 큰따옴표/줄바꿈 정리
+    private String escape(String s) {
+        return s == null ? "" : s.replace("\"", "'").replace("\n", " ").trim();
+    }
+
+    private String encode(String md) {
+        return Base64.getEncoder().encodeToString(md.getBytes(StandardCharsets.UTF_8));
+    }
 
     // 이하 private 메서드들은 기존과 동일, 변경 없음
 

@@ -1,11 +1,16 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getPosts } from '../api/postApi';
-import type { Post } from '../types';
+import type { Post, AuthState } from '../types';
 
 const CATEGORIES = ['전체보기', 'Dev', 'Etc.'];
+const OWNER = 'TaeSeungJeon';
 
-function PostsPage() {
+interface PostsPageProps {
+    auth: AuthState;
+}
+
+function PostsPage({ auth }: PostsPageProps) {
     const [posts, setPosts] = useState<Post[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedCategory, setSelectedCategory] = useState('전체보기');
@@ -25,13 +30,24 @@ function PostsPage() {
         <div className="space-y-12">
 
             {/* 페이지 타이틀 */}
-            <div className="space-y-2 pt-10">
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                    Posts
-                </h1>
-                <p className="text-sm text-gray-400 dark:text-gray-500">
-                    {isLoading ? '...' : `${filteredPosts.length}개의 글`}
-                </p>
+            <div className="flex items-end justify-between pt-10">
+                <div className="space-y-2">
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                        Posts
+                    </h1>
+                    <p className="text-sm text-gray-400 dark:text-gray-500">
+                        {isLoading ? '...' : `${filteredPosts.length}개의 글`}
+                    </p>
+                </div>
+
+                {auth.username === OWNER && (
+                    <Link
+                        to="/posts/new"
+                        className="shrink-0 px-4 py-2 text-sm text-white bg-gray-900 dark:bg-white dark:text-gray-900 rounded-lg hover:opacity-80 transition-opacity"
+                    >
+                        ✏️ 글쓰기
+                    </Link>
+                )}
             </div>
 
             {/* 카테고리 탭 */}

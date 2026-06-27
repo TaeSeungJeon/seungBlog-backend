@@ -1,6 +1,7 @@
 package com.playground.backend.controller;
 
 import com.playground.backend.dto.PostDetailDto;
+import com.playground.backend.dto.PostRequestDto;
 import com.playground.backend.dto.PostSummaryDto;
 import com.playground.backend.exception.CustomException;
 import com.playground.backend.service.PostService;
@@ -31,6 +32,37 @@ public class PostController {
     @GetMapping("/{filename}")
     public ResponseEntity<PostDetailDto> getPost(@PathVariable String filename) {
         return ResponseEntity.ok(postService.getPost(filename));
+    }
+
+    // 글 작성 — 로그인한 관리자 본인만 가능. content 레포에 .md 파일로 자동 커밋
+    @PostMapping
+    public ResponseEntity<PostDetailDto> createPost(
+            @RequestBody PostRequestDto request,
+            @AuthenticationPrincipal String username
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(postService.createPost(request, username));
+    }
+
+    // 글 수정 — 관리자 본인만 가능
+    @PutMapping("/{filename}")
+    public ResponseEntity<PostDetailDto> updatePost(
+            @PathVariable String filename,
+            @RequestBody PostRequestDto request,
+            @AuthenticationPrincipal String username
+    ) {
+        return ResponseEntity.ok(postService.updatePost(filename, request, username));
+    }
+
+    // 글 삭제 — 관리자 본인만 가능
+    @DeleteMapping("/{filename}")
+    public ResponseEntity<Void> deletePost(
+            @PathVariable String filename,
+            @AuthenticationPrincipal String username
+    ) {
+        postService.deletePost(filename, username);
+        return ResponseEntity.noContent().build();
     }
 
     // 캐시 수동 초기화 엔드포인트

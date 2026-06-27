@@ -10,6 +10,16 @@ export interface PostDetail extends Post {
     content: string;
 }
 
+// 글 생성/수정 요청 — filename/date/category는 비우면 서버가 채움
+export interface PostRequest {
+    filename?: string;
+    title: string;
+    date?: string;
+    description?: string;
+    category?: string;
+    content: string;
+}
+
 export interface Reply {
     avatarUrl: string;
     content: string;
