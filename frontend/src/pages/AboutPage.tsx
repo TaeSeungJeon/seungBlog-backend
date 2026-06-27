@@ -104,7 +104,7 @@ function AboutPage() {
                                     value: 'github.com/TaeSeungJeon'
                                 },
                                 {label: 'Email.', href: 'mailto:xoxoxx832@gmail.com', value: 'xoxoxx832@gmail.com'},
-                                {label: 'Notion.', href: 'https://www.notion.so/Seung-Blog-3345853a763f80f99a3ed9c85453b270', value: 'tae seung Jeon-notion'},
+                                {label: 'Portfolio.', href: `${import.meta.env.BASE_URL}portfolio.png`, value: '포트폴리오 보기'},
                                 {label: 'Address.', value: 'DaeJeon, South Korea'},
 
                             ].map((contact) => (

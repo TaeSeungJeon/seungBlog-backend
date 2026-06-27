@@ -11,7 +11,7 @@ const PROJECTS = [
         stack: ['Spring Boot', 'React', 'TypeScript', 'GitHub API', '...'],
         github: 'https://github.com/TaeSeungJeon/seung-backend',
         demo: null,
-        notion: 'https://www.notion.so/Seung-Blog-3345853a763f80f99a3ed9c85453b270',
+        portfolio: `${import.meta.env.BASE_URL}portfolio.png`,
         status: 'in progress',
     },
     {
@@ -20,7 +20,7 @@ const PROJECTS = [
         image: CINEMA_TALK_IMG,
         stack: ['Java', 'Oracle DB', 'Servlet MVC', 'JSP', 'HTML', 'CSS', 'JavaScript', '...'],
         github: null,
-        notion: 'https://www.notion.so/Cinema-Talk-3335853a763f80d3869ded50062845af',
+        portfolio: `${import.meta.env.BASE_URL}portfolio.png`,
         demo: 'https://taeseungjeon.github.io/SeungBlog/?code=fc05f54f547124bf1f38#/posts/MiddlePj-CinemaTalk.md',
         status: 'done',
     },
@@ -120,12 +120,12 @@ function PlaygroundPage() {
                                         Posts ↗
                                     </a>
                                 )}
-                                {project.notion && (
-                                    <a href={project.notion}
+                                {project.portfolio && (
+                                    <a href={project.portfolio}
                                        target="_blank"
                                        rel="noopener noreferrer"
                                        className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors">
-                                        notion ↗
+                                        Portfolio ↗
                                     </a>
                                 )}
                             </div>
