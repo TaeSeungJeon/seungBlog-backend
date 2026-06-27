@@ -1,0 +1,31 @@
+name: Set Server GITHUB_TOKEN
+
+# 수동 실행 전용. CONTENT_TOKEN 시크릿 값을 서버의 GITHUB_TOKEN 환경변수로 주입하고 서비스를 재시작한다.
+# (systemd drop-in 으로 덮어쓰므로 기존 토큰 위치를 몰라도 동작)
+on:
+  workflow_dispatch:
+
+jobs:
+  set-token:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 서버에 토큰 주입 후 재시작
+        uses: appleboy/ssh-action@v1
+        env:
+          CONTENT_TOKEN: ${{ secrets.CONTENT_TOKEN }}
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          envs: CONTENT_TOKEN
+          script: |
+            set -e
+            sudo mkdir -p /etc/systemd/system/seung-backend.service.d
+            printf '[Service]\nEnvironment="GITHUB_TOKEN=%s"\n' "$CONTENT_TOKEN" | sudo tee /etc/systemd/system/seung-backend.service.d/token.conf >/dev/null
+            sudo chmod 600 /etc/systemd/system/seung-backend.service.d/token.conf
+            sudo systemctl daemon-reload
+            sudo systemctl restart seung-backend
+            echo "재시작 완료. 부팅 대기..."
+            sleep 10
+            code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/api/posts)
+            echo "로컬 /api/posts 응답 코드: $code"
