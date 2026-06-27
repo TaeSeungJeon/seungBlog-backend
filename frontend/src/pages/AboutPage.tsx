@@ -36,6 +36,11 @@ const EDUCATION = [
 
 const OTHER = [
     {
+        period: '2026 ~',
+        title: '(주)코드베일리',
+        description: '백오피스(Back-office) 프로그램 제작 / AI 활용 개발 역량 학습'
+    },
+    {
         period: '2023 ~ 2025',
         title: '오뎅오색 대전 노은역점 운영',
         description: '오뎅바 운영 자영업 경험'
@@ -203,7 +208,7 @@ function AboutPage() {
                      className={`fade-up ${other.isVisible ? 'visible' : ''} space-y-6`}>
                 <hr color="gray 200" className="border-gray-200 dark:border-gray-900"/>
                 <h2 className="text-s font-medium text-gray-400 dark:text-gray-300 uppercase tracking-widest">
-                    OTHER_ACTIVITY
+                    CAREER
                 </h2>
                 <div className="space-y-6">
                     {OTHER.map((item) => (
