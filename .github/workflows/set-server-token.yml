@@ -25,7 +25,10 @@ jobs:
             sudo chmod 600 /etc/systemd/system/seung-backend.service.d/token.conf
             sudo systemctl daemon-reload
             sudo systemctl restart seung-backend
-            echo "재시작 완료. 부팅 대기..."
-            sleep 10
-            code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/api/posts)
-            echo "로컬 /api/posts 응답 코드: $code"
+            echo "재시작 완료. 부팅 대기 후 확인..."
+            for i in $(seq 1 12); do
+              code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/api/posts || true)
+              echo "시도 $i: /api/posts → ${code:-연결대기}"
+              [ "$code" = "200" ] && break
+              sleep 5
+            done
