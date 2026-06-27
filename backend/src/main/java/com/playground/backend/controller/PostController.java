@@ -2,9 +2,13 @@ package com.playground.backend.controller;
 
 import com.playground.backend.dto.PostDetailDto;
 import com.playground.backend.dto.PostSummaryDto;
+import com.playground.backend.exception.CustomException;
 import com.playground.backend.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +19,9 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
+
+    @Value("${github.username}")
+    private String owner;
 
     @GetMapping
     public ResponseEntity<List<PostSummaryDto>> getPosts() {
@@ -29,7 +36,10 @@ public class PostController {
     // 캐시 수동 초기화 엔드포인트
     // 새 글 올린 후 https://seungblog.duckdns.org/api/posts/cache/clear 호출하면 즉시 반영
     @DeleteMapping("/cache/clear")
-    public ResponseEntity<Void> clearCache() {
+    public ResponseEntity<Void> clearCache(@AuthenticationPrincipal String username) {
+        if (username == null || !owner.equalsIgnoreCase(username)) {
+            throw new CustomException(HttpStatus.FORBIDDEN, "접근 권한이 없습니다.");
+        }
         postService.clearCache();
         return ResponseEntity.noContent().build();
     }

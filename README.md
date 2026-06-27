@@ -1,49 +1,36 @@
-# SeungBlog Backend
----
+# SeungBlog
 
-## Tech Stack
+Spring Boot(백엔드) + React(프론트엔드) 모노레포.
 
-### IDE
-- IntelliJ 25.3.2
+## 구조
 
-### Backend
-- Java 21 
-- Spring Boot
-- Spring Web (REST API)
-- Spring Security
+```
+seungBlog-backend/
+├── backend/    # Spring Boot (Java 21, Maven)
+│   ├── src/
+│   ├── pom.xml
+│   └── mvnw
+├── frontend/   # React (Vite + TypeScript)
+│   ├── src/
+│   └── package.json
+└── .github/    # CI (backend 배포)
+```
 
-### Authentication
-- GitHub OAuth
-- JWT (Access Token 기반)
+## 로컬 실행
 
-### Infra
-- Oracle Cloud VM.Standard.A1.Flex (ARM, 1OCPU / 6GB)
+### 백엔드
+```bash
+cd backend
+./mvnw spring-boot:run
+```
 
-### Domain / SSL
-- DuckDNS + Let's Encrypt (Certbot)
+### 프론트엔드
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-### 리버스 프록시
-- Nginx
-  
----
-
-Spring Boot 기반의 개인 기술 블로그 백엔드 서버입니다.  
-게시글 조회, GitHub OAuth 로그인, JWT 인증, 방명록 기능을 제공합니다.
-
-프론트엔드(React)와 REST API로 통신하며,  
-Markdown 기반 게시글을 제공하는 블로그 플랫폼 구조로 설계되었습니다.
-
----
-
-## Project Overview
-
-이 프로젝트는 단순 CRUD 서버가 아닌  
-**인증 + 콘텐츠 + 사용자 인터랙션**을 포함한 실제 서비스 형태의 프로젝트입니다.
-
-주요 목적:
-- 게시글 조회 API 제공
-- GitHub OAuth 기반 로그인 구현
-- JWT 인증 구조 설계
-- 방명록 기능 구현
-- 프론트엔드와 REST API 통신 구조 설계
-
+## 배포
+- **백엔드**: `backend/**` 변경 시 `.github/workflows/deploy.yml` 가 서버로 JAR 배포.
+- **프론트엔드**: `frontend/` 에서 `npm run deploy` (gh-pages).
