@@ -21,7 +21,7 @@ const EXPERIENCES = [
     },
     {
         period: '2025.12 ~ 2026.~07',
-        title: '전자정부 Framework & React(AWS)기반 풀-스택 과정 ing',
+        title: '전자정부 Framework & React(AWS)기반 풀-스택 과정',
         description: '대덕 인재개발원 25년 14기 / java, spring, ts, node js 등',
     },
 ];
