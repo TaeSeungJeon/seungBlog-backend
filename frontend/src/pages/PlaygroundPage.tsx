@@ -11,7 +11,7 @@ const PROJECTS = [
         stack: ['Spring Boot', 'React', 'TypeScript', 'GitHub API', '...'],
         github: 'https://github.com/TaeSeungJeon/seung-backend',
         demo: null,
-        portfolio: `${import.meta.env.BASE_URL}portfolio.png`,
+        portfolio: 'http://www.github.com/TaeSeungJeon',
         status: 'in progress',
     },
     {
@@ -20,7 +20,7 @@ const PROJECTS = [
         image: CINEMA_TALK_IMG,
         stack: ['Java', 'Oracle DB', 'Servlet MVC', 'JSP', 'HTML', 'CSS', 'JavaScript', '...'],
         github: null,
-        portfolio: `${import.meta.env.BASE_URL}portfolio.png`,
+        portfolio: 'http://www.github.com/TaeSeungJeon',
         demo: 'https://taeseungjeon.github.io/SeungBlog/?code=fc05f54f547124bf1f38#/posts/MiddlePj-CinemaTalk.md',
         status: 'done',
     },

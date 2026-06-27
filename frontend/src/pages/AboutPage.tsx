@@ -104,7 +104,7 @@ function AboutPage() {
                                     value: 'github.com/TaeSeungJeon'
                                 },
                                 {label: 'Email.', href: 'mailto:xoxoxx832@gmail.com', value: 'xoxoxx832@gmail.com'},
-                                {label: 'Portfolio.', href: `${import.meta.env.BASE_URL}portfolio.png`, value: '포트폴리오 보기'},
+                                {label: 'Portfolio.', href: 'http://www.github.com/TaeSeungJeon', value: '포트폴리오 보기'},
                                 {label: 'Address.', value: 'DaeJeon, South Korea'},
 
                             ].map((contact) => (

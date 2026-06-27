@@ -142,7 +142,7 @@ function HomePage() {
                                 {label: 'github', href: 'https://github.com/TaeSeungJeon'},
                                 /*{label: ' blog', href: 'https://github.com/TaeSeungJeon/TaeSeung-Blog'},*/
                                 /*{label: ' velog', href: 'https://velog.io/@xoxo832/posts'},*/
-                                {label: ' Portfolio', href: `${import.meta.env.BASE_URL}portfolio.png`},
+                                {label: ' Portfolio', href: 'http://www.github.com/TaeSeungJeon'},
 
                             ].map((link) => (
                                 <a key={link.label}
