@@ -40,8 +40,8 @@ jobs:
       - name: SeungBlog 레포 gh-pages 로 배포
         uses: peaceiris/actions-gh-pages@v4
         with:
-          # SeungBlog 레포 쓰기 권한이 있는 PAT (Secret 으로 등록)
-          personal_token: ${{ secrets.GH_PAGES_TOKEN }}
+          # SeungBlog 레포에 등록된 배포키(공개키)에 대응하는 비밀키 (Secret)
+          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
           external_repository: TaeSeungJeon/SeungBlog
           publish_branch: gh-pages
           publish_dir: ./frontend/dist
