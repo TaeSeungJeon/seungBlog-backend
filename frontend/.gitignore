@@ -28,5 +28,6 @@ dist-ssr
 .env
 .env.*
 !.env.example
-# �ӽ� �ڱ�Ұ��� (���� ����)
-public/info.md
+# public 폴더 (개인 자료: 자기소개서/포트폴리오/사진 등 저장소 공개 방지)
+# 로컬 빌드(npm run build)로 dist에 포함되어 배포되므로 저장소에서만 제외됩니다.
+public/
