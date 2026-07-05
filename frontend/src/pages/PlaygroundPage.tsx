@@ -21,7 +21,7 @@ const PROJECTS = [
         stack: ['Java', 'Oracle DB', 'Servlet MVC', 'JSP', 'HTML', 'CSS', 'JavaScript', '...'],
         github: null,
         portfolio: `${import.meta.env.BASE_URL}portfolio_TaeSeungJeon.pdf`,
-        demo: 'https://taeseungjeon.github.io/SeungBlog/?code=fc05f54f547124bf1f38#/posts/MiddlePj-CinemaTalk.md',
+        demo: 'https://taeseungjeon.github.io/TaeSeungBlog/?code=fc05f54f547124bf1f38#/posts/MiddlePj-CinemaTalk.md',
         status: 'done',
     },
 ];

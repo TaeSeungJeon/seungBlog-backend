@@ -25,7 +25,7 @@ const RECENT_PROJECTS = [
         title: '중간 프로젝트 영화 커뮤니티 Cinema-Talk !',
         description: '대덕 인재개발원 영화 커뮤니티 주제 5인 1조 PL:전태승',
         stack: ['Java', 'Oracle DB', 'Servlet MVC', 'JSP', 'HTML', 'CSS', 'JavaScript', '...'],
-        github: 'https://taeseungjeon.github.io/SeungBlog/#/posts/MiddlePj-CinemaTalk.md',
+        github: 'https://taeseungjeon.github.io/TaeSeungBlog/#/posts/MiddlePj-CinemaTalk.md',
         demo: null,
         status: 'done',
     },
@@ -35,13 +35,13 @@ const PIXED_POSTS = [
     {
         title: '서버가 아무것도 저장을 하지 않는다고? WAS & JWT ',
         description: 'WAS와 JWT의 정의, 사용 방법 그리고 둘이 만났을 때 어떤 환경이 만들어지는가',
-        link: 'https://taeseungjeon.github.io/SeungBlog/#/posts/WASandJWT.md',
+        link: 'https://taeseungjeon.github.io/TaeSeungBlog/#/posts/WASandJWT.md',
         demo: null,
     },
     {
         title: '커넥션 풀, 왜필요한가? 그리고 HikariCP 알고 쓰자! 光',
         description: 'JDBC 학습중이라면 히카리는 듣고 가자!',
-        link: 'https://taeseungjeon.github.io/SeungBlog/#/posts/HikariCP.md',
+        link: 'https://taeseungjeon.github.io/TaeSeungBlog/#/posts/HikariCP.md',
         demo: null,
     },
 ]
